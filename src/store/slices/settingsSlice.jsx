@@ -14,6 +14,6 @@ import {createSlice} from '@reduxjs/toolkit'
         }
     }
  })
-// dispatch
+
 export const {setTemperatureUnit} = settingsSlice.actions;
 export default settingsSlice.reducer;

@@ -7,16 +7,16 @@ import FavoritesPage from './pages/FavoritesPage'
 import './App.css'
 
 function App() {
-  const [miasta, setMiasta] = useState([]); 
+  const [miasta, setMiasta] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      
+
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      
+
+
       setLoading(false);
     };
 
@@ -36,9 +36,9 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage miasta={miasta}/>} />
-          <Route path="/miasto/:cityId" element={<CityDetailPage miasta={miasta}/>} />
-          <Route path='/ulubione' element={<FavoritesPage miasta={miasta}/>}/>
+          <Route path="/" element={<HomePage miasta={miasta} />} />
+          <Route path="/miasto/:cityId" element={<CityDetailPage miasta={miasta} />} />
+          <Route path='/ulubione' element={<FavoritesPage miasta={miasta} />} />
         </Routes>
       </BrowserRouter>
     </>

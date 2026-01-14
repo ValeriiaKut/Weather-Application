@@ -13,32 +13,33 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ------HomePage------------ */
 
 .header-row {
   display: flex;
-  align-items: center;     /* по вертикалі */
-  justify-content: space-between; /* по горизонталі */
+  align-items: center;
+  justify-content: space-between;
   height: 64px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 30px rgba(255, 255, 255, 0.779);
+  padding: 0 20px;
 }
 
+
 body {
-  margin: 0; /* прибираємо стандартні відступи */
+  margin: 0;
   padding: 0;
-  background-image: url('/images/frutiger-aero-6.webp'); /* шлях до фото у public */
-  background-size: cover; /* фото займає весь екран */
-  background-position: center; /* центр зображення */
-  background-repeat: repeat; /* без повторів */
-  height: 100vh; /* висота 100% viewport */
+  background-image: url('/images/wall3.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat;
+  height: 100vh;
   width: 100vw;
   z-index: 0;
- 
-  
-}
-.image {
-  position: relative;   /* 👈 ОБОВʼЯЗКОВО */
-  width: 100%;
-  height: 100vh;
-  z-index: 1;
 }
 
 .woman {
@@ -46,28 +47,23 @@ body {
   bottom: 0;
   right: 0;
   width: 500px;
-  z-index: 1;
+  z-index: 0;
 }
 
 .cat {
   position: absolute;
   bottom: 0;
-  right: 60px; /* трохи лівіше */
-   bottom: 580px; 
+  right: 60px;
+  bottom: 580px;
   width: 150px;
 }
 
-
-
-
 .cities-container {
-  display: grid;                 /* робимо контейнер grid */
-  grid-template-columns: repeat(3, 1fr); /* 3 картки в ряд */
-  gap: 10px;                     /* відстань між картками */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
   margin-top: 10px;
 }
-
-
 
 .city-card {
   position: relative;
@@ -75,37 +71,24 @@ body {
   height: 300px;
   padding: 20px;
   z-index: 0;
- 
+
 }
+
 .city-card::before {
   content: "";
   position: absolute;
   inset: -200px;
-
   background-image: url('/images/player.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-
   border-radius: 20px;
-
-  z-index: -1;        /* 🔑 ГОЛОВНЕ */
+  z-index: -1;
   pointer-events: none;
 }
 
-
-
-
-.header-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-
 .header-title {
-  font-size: 28px;
+  font-size: 20px;
   color: #0f0b0b;
 }
 
@@ -113,8 +96,7 @@ body {
   background-color: transparent;
   color: rgb(6, 6, 6);
   border: none;
-  border-radius: 8px;
-  font-size: 28px;
+  font-size: 20px;
   padding: 8px 12px;
   cursor: pointer;
 }
@@ -123,52 +105,87 @@ body {
   padding: 6px 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  color: #111; /* темний текст */
-  background-color: transparent; /* прозорий фон */
+  color: #111;
+  background-color: transparent;
 }
+
+.search-input::placeholder {
+  color: #888;
+  opacity: 1;
+}
+
 .unit-switcher select {
-  color: #111; /* темний текст */
-  background-color: transparent; /* прозорий фон */
-  font-weight: 700; /* жирний текст */
-  border: 1px solid #ccc; /* рамка */
-  border-radius: 8px; /* закруглені кути */
-  padding: 6px 12px; /* відступи */
- 
-}
-
-/* Якщо хочеш трохи стиль для option (хоча їх не завжди можна повністю стилізувати) */
-.unit-switcher option {
-  color: #9c6767;
+  color: #111;
+  background-color: transparent;
   font-weight: 700;
- /* option завжди має фон */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 6px 12px;
 }
+
+.favorite {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #ffd900;
+}
+
+.favorite:hover {
+  color: #FFEC70;
+  transform: scale(1.2);
+  transition: all 0.2s ease;
+}
+
+/* ------FavoritePage------------ */
+
+.fav-card {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+
+}
+
+.fav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 30px rgba(255, 255, 255, 0.779);
+  padding: 0 20px;
+}
+
+.back-buttom {
+  background-color: transparent;
+  color: #111;
+  font-size: 20px;
+  border: 1px;
+}
+
+/* ------DetailsPage------------ */
+.forecast-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 30px rgba(255, 255, 255, 0.1);
+  padding: 10px;
+}
+
 .details-card {
-  position: relative;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 30px rgba(255, 255, 255, 0.1);
 }
-
-.details-card::before {
-  content: "";
-  position: absolute;
-  inset: -100px;
-  
-  background-image: url('/images/player.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-position: center bottom; 
-  border-radius: 40px;
-
-  z-index: 1;        /* 🔑 ГОЛОВНЕ */
-  pointer-events: none;
- 
-}
-
-.details-panel {
-  position: relative;
-  z-index: 1;
-}
-
-
-
-
-

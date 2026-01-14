@@ -1,33 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
+import HomePage from './pages/HomePage'
+import CityDetailPage from './pages/CityDetailPage'
+import FavoritesPage from './pages/FavoritesPage'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [miasta, setMiasta] = useState([]); 
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      
+      setLoading(false);
+    };
+
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div>
+        <h1>Ładowanie danych pogodowych...</h1>
+        <p>Proszę czekać...</p>
+      </div>
+    );
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage miasta={miasta}/>} />
+          <Route path="/miasto/:cityId" element={<CityDetailPage miasta={miasta}/>} />
+          <Route path='/ulubione' element={<FavoritesPage miasta={miasta}/>}/>
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }

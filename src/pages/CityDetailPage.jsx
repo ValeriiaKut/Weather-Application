@@ -1,55 +1,56 @@
 import WeatherDetails from '../components/WeatherDetails'
-import { useParams, useNavigate } from 'react-router-dom';
-import { fetchWeather } from '../api/weatherApi';
-import { fetchForecast } from '../api/weatherApi';
-import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom'
+import { fetchWeatherById, fetchForecastById } from '../api/weatherApi'
+import { useState, useEffect } from 'react'
 
 function CityDetailPage() {
-  const [miasta, setMiasta] = useState([]);
-  const [forecastMap, setForecastMap] = useState({});
-
-  const { cityId } = useParams();
-  const navigate = useNavigate();
-
-  const miasto = miasta.find(x => x.id === parseInt(cityId));
+  const [miasto, setMiasto] = useState(null)
+  const [forecast, setForecast] = useState([])
+  const { cityId } = useParams() // беремо назву міста з URL
+  const navigate = useNavigate()
 
   useEffect(() => {
-    async function getData() {
-      const cities = ["Warsaw", "Krakow", "Gdansk", "Wroclaw", "Katowice", "Lodz"];
+    if (!cityId) return;
 
-      const results = await Promise.all(cities.map(city => fetchWeather(city)));
-      setMiasta(results);
+    async function getCityData() {
+      try {
+        // Використовуємо id для fetchWeather
+        const cityData = await fetchWeatherById(cityId);
+        setMiasto(cityData);
 
-      const forecasts = await Promise.all(cities.map(city => fetchForecast(city)));
-      const map = {};
-      results.forEach((cityObj, idx) => {
-        map[cityObj.id] = forecasts[idx];
-      });
-      setForecastMap(map);
+        const cityForecast = await fetchForecastById(cityId);
+        setForecast(cityForecast);
+      } catch (err) {
+        console.error(err);
+        navigate('/'); // повертаємось на головну, якщо помилка
+      }
     }
-    getData();
-  }, []);
+
+    getCityData();
+  }, [cityId, navigate]);
 
   if (!miasto) {
     return (
       <div>
         <h2>Nie znaleziono miasta</h2>
-        <button onClick={() => navigate('/')}>Powrot do strony glownej</button>
+        <button onClick={() => navigate('/')}>Powrót do strony głównej</button>
       </div>
-    );
+    )
   }
 
   const miastoWithForecast = {
     ...miasto,
-    prognoza5dni: forecastMap[miasto.id] || []
-  };
+    prognoza5dni: forecast
+  }
 
   return (
     <div>
       <WeatherDetails miasto={miastoWithForecast} />
-      <button className='back-buttom' onClick={() => navigate('/')}>Powrót do strony glownej</button>
+      <button className='back-button' onClick={() => navigate('/')}>
+        Powrót do strony głównej
+      </button>
     </div>
-  );
+  )
 }
 
-export default CityDetailPage;
+export default CityDetailPage

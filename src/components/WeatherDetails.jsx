@@ -32,19 +32,34 @@ function WeatherDetails({ miasto }) {
           )}
           <div className="details-item">
             <strong>Warunki:</strong>
-            <div>{miasto.aktualnaPogoda}</div>
+            <span>{miasto.aktualnaPogoda}</span>
+          </div>
+          <div className="details-item">
+            <img src="/images/iconF.jpg"  width="200" height="200"/>
           </div>
           <div className="details-item">
             <strong>Wiatr:</strong>
-            <div>{miasto.aktualnyWiatr}</div>
+            <span>{miasto.aktualnyWiatr}</span>
           </div>
           <div className="details-item">
             <strong>Kierunek Wiatru:</strong>
-            <div>{miasto.aktualnyKierunekWiatru}</div>
+            <span>{miasto.aktualnyKierunekWiatru}</span>
           </div>
           <div className="details-item">
             <strong>Zachmurzenie:</strong>
-            <div>{miasto.aktualneZachmurzenie}</div>
+            <span>{miasto.aktualneZachmurzenie}</span>
+          </div>
+          <div className="details-item">
+            <strong>Wilgontość:</strong>
+            <span>{miasto.aktualnaWilgotnosc}</span>
+          </div>
+          <div className="details-item">
+            <strong>Opady Deszczu:</strong>
+            <span>{miasto.aktualneOpadyDeszczu}</span>
+          </div>
+           <div className="details-item">
+            <strong>Opady Śniegu:</strong>
+            <span>{miasto.aktualneOpadySniegu}</span>
           </div>
           {Array.isArray(miasto.prognoza5dni) && (
             <div className="forecast">
@@ -62,6 +77,15 @@ function WeatherDetails({ miasto }) {
                       {dzień.kierunekWiatru && (
                         <div className="details-item">Kierunek wiatru: {dzień.kierunekWiatru}</div>
                       )}
+                      <div className="details-item">Wilgotność: {dzień.wilgotnosc}</div>
+                      <div className="details-item">
+            <strong>Opady Deszczu:</strong>
+            <span>{miasto.opadyDeszczu}</span>
+          </div>
+           <div className="details-item">
+            <strong>Opady Śniegu:</strong>
+            <span>{miasto.opadySniegu}</span>
+          </div>
                       {dayIconFile && (
                         <div className="details-item">
                           <Player

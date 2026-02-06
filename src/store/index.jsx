@@ -1,3 +1,4 @@
+
 import { configureStore } from '@reduxjs/toolkit';
 import settingsReducer from './slices/settingsSlice';
 import favoritesReducer from './slices/favoritesSlice';
@@ -18,6 +19,8 @@ const loadState = () => {
     return undefined;
   }
 };
+
+
 
 
 const saveState = (state) => {

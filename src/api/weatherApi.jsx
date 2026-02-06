@@ -1,4 +1,4 @@
-
+import axios from 'axios';
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY
 
 export function degToDirection(deg) {
@@ -17,22 +17,33 @@ export function degToDirection(deg) {
 export function transformCurrentWeather(json) {
   return {
     id: json.id,
-    miasto: json.name.toLowerCase(),
+    miasto: json.name,
     aktualnaTemperatura: json.main.temp,
     aktualnaPogoda: json.weather[0].main,
     aktualnyWiatr: json.wind.speed,
     aktualnyKierunekWiatru: degToDirection(json.wind.deg),
     aktualneZachmurzenie: json.clouds.all,
     ikonaPogody: json.weather[0].icon,
+    aktualnaWilgotnosc: json.main.humidity,
+    aktualneOpadyDeszczu: json.rain?.["24h"] ?? 0,
+    aktualneOpadySniegu: json.snow?.["12h"] ?? 0
   };
 }
 
 export async function fetchWeather(city) {
-  const res = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=pl`
-  );
-  const json = await res.json();
-  return transformCurrentWeather(json);
+  try {
+    const res = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
+      params: {
+        q: city,
+        appid: API_KEY,
+        units: 'metric',
+        lang: 'pl'
+      }
+    });
+    return transformCurrentWeather(res.data);
+  } catch (error) {
+    throw new Error(`Błąd pobierania danych pogody: ${error.response?.data?.message || error.message}`);
+  }
 }
 
 export function transformForecast(json) {
@@ -52,6 +63,9 @@ export function transformForecast(json) {
       kierunekWiatru: degToDirection(item.wind.deg),
       zachmurzenie: item.clouds.all,
       ikona: item.weather[0].icon,
+      wilgotnosc: item.main.humidity,
+      opadyDeszczu: item.rain?.["1h"] ?? 0,
+      opadySniegu: item.snow?.["1h"] ?? 0
     });
   });
 
@@ -70,6 +84,10 @@ export function transformForecast(json) {
         entries.reduce((sum, e) => sum + e.zachmurzenie, 0) / entries.length;
 
       const noonEntry = entries.find(e => e.czas.includes("12:00")) || entries[0];
+      const avgHum = entries.reduce((sum, e) => sum + e.wilgotnosc, 0) / entries.length;
+      const totalRain = entries.reduce((sum, e) => sum + (e.rain ?? 0), 0);
+      const totalSnow = entries.reduce((sum, e) => sum + (e.snow ?? 0), 0);
+
 
       return {
         date,
@@ -79,21 +97,60 @@ export function transformForecast(json) {
         pogoda: noonEntry.pogoda,
         ikona: noonEntry.ikona,
         kierunekWiatru: noonEntry.kierunekWiatru,
+        wilgotnosc: parseFloat(avgHum.toFixed(1)),
+        opadyDeszczu: parseFloat(totalRain.toFixed(1)),
+        opadySniegu: parseFloat(totalSnow.toFixed(1)),
       };
     });
 
   return dailyForecast;
 }
 export async function fetchForecast(city) {
-  const res = await fetch(
-    `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=pl`
-  );
-
-  if (!res.ok) {
-    const json = await res.json();
-    throw new Error(`error: ${json.message}`);
+  try {
+    const res = await axios.get('https://api.openweathermap.org/data/2.5/forecast', {
+      params: {
+        q: city,
+        appid: API_KEY,
+        units: 'metric',
+        lang: 'pl'
+      }
+    });
+    return transformForecast(res.data);
+  } catch (error) {
+    throw new Error(`Błąd pobierania prognozy: ${error.response?.data?.message || error.message}`);
   }
-
-  const json = await res.json();
-  return transformForecast(json);
 }
+// Погода по id
+export async function fetchWeatherById(id) {
+  try {
+    const res = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
+      params: {
+        id,
+        appid: API_KEY,
+        units: 'metric',
+        lang: 'pl'
+      }
+    });
+    return transformCurrentWeather(res.data);
+  } catch (error) {
+    throw new Error(`Błąd pobierania danych pogody: ${error.response?.data?.message || error.message}`);
+  }
+}
+
+// Прогноз по id
+export async function fetchForecastById(id) {
+  try {
+    const res = await axios.get('https://api.openweathermap.org/data/2.5/forecast', {
+      params: {
+        id,
+        appid: API_KEY,
+        units: 'metric',
+        lang: 'pl'
+      }
+    });
+    return transformForecast(res.data);
+  } catch (error) {
+    throw new Error(`Błąd pobierania prognozy: ${error.response?.data?.message || error.message}`);
+  }
+}
+

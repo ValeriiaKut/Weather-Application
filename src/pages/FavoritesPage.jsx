@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import WeatherCard from '../components/WeatherCard';
 import UnitSwitcher from '../components/UnitSwitcher';
-import { fetchWeather } from '../api/weatherApi';
+import { fetchWeatherById } from '../api/weatherApi';
 import { useEffect, useState } from 'react';
 function FavoritesPage() {
     const [miasta, setMiasta] = useState([]);
@@ -12,14 +12,21 @@ function FavoritesPage() {
 
     const favoriteCities = miasta.filter(m => favoriteIds.includes(m.id));
 
-    useEffect(() => {
-        async function getData() {
-            const cities = ["Warszawa", "Krakow", "Gdansk", "Wroclaw", "Katowice", "Lodz"];
-            const results = await Promise.all(cities.map(city => fetchWeather(city)));
-            setMiasta(results);
-        }
-        getData();
-    }, []);
+     useEffect(() => {
+    async function getData() {
+      if (favoriteIds.length === 0) return;
+
+      try {
+        // Завантажуємо усі улюблені міста по id
+        const results = await Promise.all(favoriteIds.map(id => fetchWeatherById(id)));
+        setMiasta(results);
+      } catch (err) {
+        console.error('Błąd pobierania ulubionych miast:', err);
+      }
+    }
+
+    getData();
+  }, [favoriteIds]);
 
     return (
         <div>

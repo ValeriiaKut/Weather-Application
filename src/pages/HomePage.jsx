@@ -7,12 +7,12 @@ import { fetchWeather } from '../api/weatherApi';
 
 function HomePage() {
   const [miasta, setMiasta] = useState([]);
-  const [wybraneMiasto, setWybraneMiasto] = useState(null);
+  const [wybraneMiasto] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResult, setSearchResult] = useState(null); // нове місто з API
+  const [searchResult, setSearchResult] = useState(null); 
   const navigate = useNavigate();
 
-  // Завантажуємо популярні міста при старті
+
   useEffect(() => {
     async function getData() {
       const cities = ["Warszawa", "Krakow", "Gdansk", "Wroclaw", "Katowice", "Lodz", "Suwałki"];
@@ -26,7 +26,7 @@ function HomePage() {
     navigate(`/miasto/${miasto.id}`);
   }, []);
 
-  // 🔹 Живий пошук через API (тимчасова картка)
+
   useEffect(() => {
     if (!searchTerm) {
       setSearchResult(null);
@@ -38,14 +38,14 @@ function HomePage() {
         const result = await fetchWeather(searchTerm);
         setSearchResult(result);
       } catch {
-        setSearchResult(null); // якщо міста немає
+        setSearchResult(null); 
       }
-    }, 500); // debounce 500мс
+    }, 500); 
 
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
-  // Масив для рендеру стартових карток (локальний пошук)
+  
   const filteredMiasta = useMemo(() => {
     if (!Array.isArray(miasta)) return [];
     return miasta.filter(miasto =>
@@ -86,7 +86,6 @@ function HomePage() {
           />
         ))}
 
-        {/* 🔹 Тимчасова картка для нового міста */}
         {searchResult && !miasta.some(m => m.id === searchResult.id) && (
           <WeatherCard
             key={searchResult.id}

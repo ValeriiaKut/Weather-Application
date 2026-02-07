@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 function CityDetailPage() {
   const [miasto, setMiasto] = useState(null)
   const [forecast, setForecast] = useState([])
-  const { cityId } = useParams() // беремо назву міста з URL
+  const { cityId } = useParams()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -14,7 +14,6 @@ function CityDetailPage() {
 
     async function getCityData() {
       try {
-        // Використовуємо id для fetchWeather
         const cityData = await fetchWeatherById(cityId);
         setMiasto(cityData);
 
@@ -22,7 +21,7 @@ function CityDetailPage() {
         setForecast(cityForecast);
       } catch (err) {
         console.error(err);
-        navigate('/'); // повертаємось на головну, якщо помилка
+        navigate('/'); 
       }
     }
 

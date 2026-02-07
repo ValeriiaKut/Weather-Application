@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toggleFavorite } from '../store/slices/favoritesSlice';
 
 function FavoriteButton({ cityId }) {
+    
 
     const dispatch = useDispatch();
 

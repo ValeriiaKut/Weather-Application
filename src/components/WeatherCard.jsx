@@ -6,6 +6,8 @@ import { weatherIcons } from "./WeatherIcon";
 
 
 function WeatherCard(props) {
+    
+     console.log('WeatherCard received cityId:', props.cityId, 'Type:', typeof props.cityId);
     const className = `city-card ${props.selected ? 'selected' : ''}`;
     const iconFile = props.pogoda ? weatherIcons[props.pogoda] : null;
     const unit = useSelector((state) => state.settings.temperatureUnit);

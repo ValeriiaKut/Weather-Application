@@ -1,45 +1,71 @@
-import { useSelector } from 'react-redux';
+// FavoritesPage.jsx (спрощений)
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import WeatherCard from '../components/WeatherCard';
 import UnitSwitcher from '../components/UnitSwitcher';
 import { fetchWeatherById } from '../api/weatherApi';
 import { useEffect, useState } from 'react';
+// Імпортуємо тільки toggleFavorite, якщо не хочете додавати нові actions
+import { toggleFavorite } from '../store/slices/favoritesSlice';
+
 function FavoritesPage() {
     const [miasta, setMiasta] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const favoriteIds = useSelector((state) =>
-        state.favorites.favoriteIds);
+    const dispatch = useDispatch();
+    
+    const favoriteIds = useSelector((state) => state.favorites.favoriteIds);
+    
+    // Фільтруємо лише валідні ID
+    const validFavoriteIds = favoriteIds.filter(id => 
+        id && typeof id === 'number' && id > 1000
+    );
 
-    const favoriteCities = miasta.filter(m => favoriteIds.includes(m.id));
+    useEffect(() => {
+        async function getData() {
+            if (validFavoriteIds.length === 0) {
+                setMiasta([]);
+                return;
+            }
 
-     useEffect(() => {
-    async function getData() {
-      if (favoriteIds.length === 0) return;
+            setIsLoading(true);
+            try {
+                // Використовуємо Promise.all з try-catch для кожного запиту
+                const promises = validFavoriteIds.map(async (id) => {
+                    try {
+                        return await fetchWeatherById(id);
+                    } catch (error) {
+                        console.warn(`Nie udało się pobrać danych dla ID ${id}:`, error.message);
+                        return null;
+                    }
+                });
+                
+                const results = await Promise.all(promises);
+                const validResults = results.filter(result => result !== null);
+                setMiasta(validResults);
+                
+            } catch (err) {
+                console.error('Błąd pobierania ulubionych miast:', err);
+            } finally {
+                setIsLoading(false);
+            }
+        }
 
-      try {
-        // Завантажуємо усі улюблені міста по id
-        const results = await Promise.all(favoriteIds.map(id => fetchWeatherById(id)));
-        setMiasta(results);
-      } catch (err) {
-        console.error('Błąd pobierania ulubionych miast:', err);
-      }
-    }
-
-    getData();
-  }, [favoriteIds]);
+        getData();
+    }, [validFavoriteIds]);
 
     return (
         <div>
             <div className='fav-header'>
                 <UnitSwitcher />
                 <h1>Ulubione Miasta</h1>
-                <button className='back-buttom' onClick={() => navigate('/')}> Powrot do listy </button>
+                <button className='back-button' onClick={() => navigate('/')}> 
+                    Powrót do listy 
+                </button>
             </div>
-            {favoriteCities.length === 0 ? (
-                <p>Nie masz jeszcze ulubiony miast.</p>
-            ) : (
+            
                 <div className='fav-card'>
-                    {favoriteCities.map((dane) => (
+                    {miasta.map((dane) => (
                         <WeatherCard
                             key={dane.id}
                             cityId={dane.id}
@@ -50,10 +76,9 @@ function FavoritesPage() {
                         />
                     ))}
                 </div>
-            )}
-
+            
         </div>
-    )
+    );
 }
 
 export default FavoritesPage;

@@ -15,6 +15,7 @@ export function degToDirection(deg) {
 }
 
 export function transformCurrentWeather(json) {
+  const pop = json.pop !== undefined ? json.pop : 0;
   return {
     id: json.id,
     miasto: json.name,
@@ -25,10 +26,12 @@ export function transformCurrentWeather(json) {
     aktualneZachmurzenie: json.clouds.all,
     ikonaPogody: json.weather[0].icon,
     aktualnaWilgotnosc: json.main.humidity,
-    aktualneOpadyDeszczu: json.rain?.["24h"] ?? 0,
-    aktualneOpadySniegu: json.snow?.["12h"] ?? 0
+    aktualneOpadyDeszczu: json.rain?.["1h"] ?? json.rain?.["3h"] ?? 0, // мм за 1h або 3h
+    aktualneOpadySniegu: json.snow?.["1h"] ?? json.snow?.["3h"] ?? 0, 
+    aktualnaSzansaOpadow: Math.round(pop * 100),
   };
 }
+
 
 export async function fetchWeather(city) {
   try {
@@ -64,10 +67,12 @@ export function transformForecast(json) {
       zachmurzenie: item.clouds.all,
       ikona: item.weather[0].icon,
       wilgotnosc: item.main.humidity,
-      opadyDeszczu: item.rain?.["1h"] ?? 0,
-      opadySniegu: item.snow?.["1h"] ?? 0
+      opadyDeszczu: item.rain?.["3h"] ?? 0,
+      opadySniegu: item.snow?.["3h"] ?? 0,
+      pop: item.pop ?? 0
     });
   });
+  
 
 
   const today = new Date();
@@ -85,8 +90,10 @@ export function transformForecast(json) {
 
       const noonEntry = entries.find(e => e.czas.includes("12:00")) || entries[0];
       const avgHum = entries.reduce((sum, e) => sum + e.wilgotnosc, 0) / entries.length;
-      const totalRain = entries.reduce((sum, e) => sum + (e.rain ?? 0), 0);
-      const totalSnow = entries.reduce((sum, e) => sum + (e.snow ?? 0), 0);
+      const totalRain = entries.reduce((sum, e) => sum + (e.opadyDeszczu ?? 0), 0);
+      const totalSnow = entries.reduce((sum, e) => sum + (e.opadySniegu ?? 0), 0);
+      const avgPop = entries.reduce((s, e) => s + e.pop, 0) / entries.length;
+
 
 
       return {
@@ -100,44 +107,46 @@ export function transformForecast(json) {
         wilgotnosc: parseFloat(avgHum.toFixed(1)),
         opadyDeszczu: parseFloat(totalRain.toFixed(1)),
         opadySniegu: parseFloat(totalSnow.toFixed(1)),
+        szansaOpadow: Math.round(avgPop * 100)
       };
     });
 
   return dailyForecast;
 }
-export async function fetchForecast(city) {
-  try {
-    const res = await axios.get('https://api.openweathermap.org/data/2.5/forecast', {
-      params: {
-        q: city,
-        appid: API_KEY,
-        units: 'metric',
-        lang: 'pl'
-      }
-    });
-    return transformForecast(res.data);
-  } catch (error) {
-    throw new Error(`Błąd pobierania prognozy: ${error.response?.data?.message || error.message}`);
-  }
-}
-// Погода по id
+
+
 export async function fetchWeatherById(id) {
+  console.log(`Fetching weather for city ID: ${id}`);
+  
   try {
+    // ПРАВИЛЬНИЙ ЗАПИТ: використовуйте параметр id безпосередньо
     const res = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
       params: {
-        id,
+        id: id,  // <-- ось так правильно!
         appid: API_KEY,
         units: 'metric',
         lang: 'pl'
       }
     });
+    
+    console.log(`Successfully fetched weather for ID ${id}:`, res.data.name);
     return transformCurrentWeather(res.data);
+    
   } catch (error) {
+    console.error(`Error fetching weather for ID ${id}:`, {
+      status: error.response?.status,
+      message: error.response?.data?.message,
+      url: error.config?.url
+    });
+    
+    // Детальна інформація про помилку
+    if (error.response?.status === 404) {
+      throw new Error(`Miasto o ID ${id} nie zostało znalezione w bazie OpenWeatherMap`);
+    }
+    
     throw new Error(`Błąd pobierania danych pogody: ${error.response?.data?.message || error.message}`);
   }
 }
-
-// Прогноз по id
 export async function fetchForecastById(id) {
   try {
     const res = await axios.get('https://api.openweathermap.org/data/2.5/forecast', {

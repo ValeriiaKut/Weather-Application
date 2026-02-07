@@ -6,6 +6,18 @@ import { Player } from '@lottiefiles/react-lottie-player';
 
 function WeatherDetails({ miasto }) {
   if (!miasto) return null;
+  console.log('=== WEATHER DETAILS DEBUG ===');
+  console.log('Full miasto object:', miasto);
+  console.log('Current precipitation data:', {
+    aktualneOpadyDeszczu: miasto.aktualneOpadyDeszczu,
+    aktualneOpadySniegu: miasto.aktualneOpadySniegu,
+    hasRainProperty: 'aktualneOpadyDeszczu' in miasto,
+    hasSnowProperty: 'aktualneOpadySniegu' in miasto,
+    typeOfRain: typeof miasto.aktualneOpadyDeszczu,
+    typeOfSnow: typeof miasto.aktualneOpadySniegu
+  });
+  console.log('All properties of miasto:', Object.keys(miasto));
+  console.log('=============================');
   const unit = useSelector((state) => state.settings.temperatureUnit);
   const unitSymbol = getUnitSymbol(unit);
   const iconFile = weatherIcons[miasto.aktualnaPogoda];
@@ -54,13 +66,18 @@ function WeatherDetails({ miasto }) {
             <span>{miasto.aktualnaWilgotnosc}</span>
           </div>
           <div className="details-item">
-            <strong>Opady Deszczu:</strong>
-            <span>{miasto.aktualneOpadyDeszczu}</span>
-          </div>
-           <div className="details-item">
-            <strong>Opady Śniegu:</strong>
-            <span>{miasto.aktualneOpadySniegu}</span>
-          </div>
+                         <strong>Opady Śniegu:</strong>
+                         <span>{miasto.aktualneOpadySniegu}</span>
+                      </div>
+                     <div className="details-item">
+                         <strong>Opady Deszczu:</strong>
+                         <span>{miasto.aktualneOpadyDeszczu}</span>
+                      </div>
+                      <div className="details-item">
+                         <strong>Szansa Opadów:</strong>
+                         <span>{miasto.aktualnaSzansaOpadow}</span>
+                      </div>
+          
           {Array.isArray(miasto.prognoza5dni) && (
             <div className="forecast">
               <h3>5-dniowa prognoza</h3>
@@ -79,13 +96,17 @@ function WeatherDetails({ miasto }) {
                       )}
                       <div className="details-item">Wilgotność: {dzień.wilgotnosc}</div>
                       <div className="details-item">
-            <strong>Opady Deszczu:</strong>
-            <span>{miasto.opadyDeszczu}</span>
-          </div>
-           <div className="details-item">
-            <strong>Opady Śniegu:</strong>
-            <span>{miasto.opadySniegu}</span>
-          </div>
+                        <strong>Opady Deszczu:</strong>
+                          <span>{dzień.opadyDeszczu}</span>
+                      </div>
+                      <div className="details-item">
+                         <strong>Opady Śniegu:</strong>
+                         <span>{dzień.opadySniegu}</span>
+                      </div>
+                      <div className="details-item">
+                        <strong>Szansa Opadów:</strong>
+                          <span>{dzień.szansaOpadow}</span>
+                      </div>
                       {dayIconFile && (
                         <div className="details-item">
                           <Player

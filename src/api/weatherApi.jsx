@@ -26,7 +26,7 @@ export function transformCurrentWeather(json) {
     aktualneZachmurzenie: json.clouds.all,
     ikonaPogody: json.weather[0].icon,
     aktualnaWilgotnosc: json.main.humidity,
-    aktualneOpadyDeszczu: json.rain?.["1h"] ?? json.rain?.["3h"] ?? 0, // мм за 1h або 3h
+    aktualneOpadyDeszczu: json.rain?.["1h"] ?? json.rain?.["3h"] ?? 0, 
     aktualneOpadySniegu: json.snow?.["1h"] ?? json.snow?.["3h"] ?? 0, 
     aktualnaSzansaOpadow: Math.round(pop * 100),
   };
@@ -119,10 +119,9 @@ export async function fetchWeatherById(id) {
   console.log(`Fetching weather for city ID: ${id}`);
   
   try {
-    // ПРАВИЛЬНИЙ ЗАПИТ: використовуйте параметр id безпосередньо
     const res = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
       params: {
-        id: id,  // <-- ось так правильно!
+        id: id,  
         appid: API_KEY,
         units: 'metric',
         lang: 'pl'
@@ -139,7 +138,6 @@ export async function fetchWeatherById(id) {
       url: error.config?.url
     });
     
-    // Детальна інформація про помилку
     if (error.response?.status === 404) {
       throw new Error(`Miasto o ID ${id} nie zostało znalezione w bazie OpenWeatherMap`);
     }

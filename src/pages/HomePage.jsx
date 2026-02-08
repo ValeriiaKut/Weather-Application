@@ -15,7 +15,7 @@ function HomePage() {
 
   useEffect(() => {
     async function getData() {
-      const cities = ["Warszawa", "Krakow", "Gdansk", "Wroclaw", "Katowice", "Lodz", "Suwałki"];
+      const cities = ["Warszawa", "Krakow", "Gdansk", "Wroclaw", "Katowice", "Suwałki"];
       const results = await Promise.all(cities.map(city => fetchWeather(city)));
       setMiasta(results);
     }
@@ -74,7 +74,6 @@ function HomePage() {
       </div>
 
       <div className="cities-container">
-        {/* 🔹 Картки локальних міст */}
         {filteredMiasta.map((dane) => (
           <WeatherCard
             key={dane.id}

@@ -6,18 +6,6 @@ import { Player } from '@lottiefiles/react-lottie-player';
 
 function WeatherDetails({ miasto }) {
   if (!miasto) return null;
-  console.log('=== WEATHER DETAILS DEBUG ===');
-  console.log('Full miasto object:', miasto);
-  console.log('Current precipitation data:', {
-    aktualneOpadyDeszczu: miasto.aktualneOpadyDeszczu,
-    aktualneOpadySniegu: miasto.aktualneOpadySniegu,
-    hasRainProperty: 'aktualneOpadyDeszczu' in miasto,
-    hasSnowProperty: 'aktualneOpadySniegu' in miasto,
-    typeOfRain: typeof miasto.aktualneOpadyDeszczu,
-    typeOfSnow: typeof miasto.aktualneOpadySniegu
-  });
-  console.log('All properties of miasto:', Object.keys(miasto));
-  console.log('=============================');
   const unit = useSelector((state) => state.settings.temperatureUnit);
   const unitSymbol = getUnitSymbol(unit);
   const iconFile = weatherIcons[miasto.aktualnaPogoda];
